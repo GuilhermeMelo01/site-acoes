@@ -4,17 +4,20 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/flowbite/**/*.js"
   ],
   theme: {
     extend: {
       fontFamily: {
         libre: ['"Libre Baskerville"', ...defaultTheme.fontFamily.sans],
-        kdam: ['"Kdam Thmor Pro"', ...defaultTheme.fontFamily.sans],
+        suez: ['"Suez One"', ...defaultTheme.fontFamily.sans],
         russo: ['"Russo One"', ...defaultTheme.fontFamily.sans],
       }
     },
   },
-  plugins: [],
+  plugins: [
+    require('flowbite/plugin')
+  ],
 }
 
 ''
