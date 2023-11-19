@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import AcaoDTO from './../../dto/AcaoDTO';
 import axios from "axios";
-import { BRAPIAPI__ACOES_BASE_URL, API_TOKEN, BRAPIAPI__CRYPTO_BASE_URL } from "../../../config";
-import { Link } from "react-router-dom";
-import logo from '../../assets/acai-logo.png'
-import CryptoDTO from "../../dto/cryptoDTO";
+import { API_TOKEN, BRAPIAPI_CRYPTO_BASE_URL } from "../../../config";
+import { VariacaoValor } from "../../components/VariacaoValor/VariacaoValor";
+import CryptoDTO from "../../dto/CryptoDTO";
 
 function Home() {
 
@@ -15,14 +14,15 @@ function Home() {
     useEffect(() => {
         const buscarAcoesDestaque = async () => {
             try {
-                const response = await axios.get(`${BRAPIAPI__ACOES_BASE_URL}?limit=6&token=${API_TOKEN}`);
+                const response = await axios.get(`https://brapi.dev/api/quote/PETR4,^BVSP,VALE3?range=1y&interval=1m&fundamental=true&dividends=true&token=iHk1CduVkzsmJxit9v7w1y`);
                 const { data } = response;
-                const extractedData: AcaoDTO[] = data.stocks.map((stock: any) => ({
-                    codigo: stock.stock,
-                    nome: stock.name,
-                    fechamento: stock.close,
-                    variacaoPercentual: stock.change,
-                    logo: stock.logo
+                console.log(data);
+                const extractedData: AcaoDTO[] = data.results.map((stock: any) => ({
+                    codigo: stock.symbol,
+                    nome: stock.longName,
+                    fechamento: stock.regularMarketPreviousClose,
+                    variacaoPercentual: stock.regularMarketChangePercent,
+                    logo: stock.logourl
                 }));
                 setAcaoDTO(extractedData);
             } catch (error) {
@@ -32,7 +32,7 @@ function Home() {
 
         const buscarCryptosDestaques = async () => {
             try {
-                const response = await axios.get(`${BRAPIAPI__CRYPTO_BASE_URL}?coin=BTC,ETC,ADA,BNB,USDT,XRP&token=${API_TOKEN}`);
+                const response = await axios.get(`${BRAPIAPI_CRYPTO_BASE_URL}?coin=BTC,ETC,ADA,BNB,USDT,XRP&token=${API_TOKEN}`);
                 const { data } = response;
                 const cryptos: CryptoDTO[] = data.coins.map((crypto: any) => ({
                     currency: crypto.currency,
@@ -115,18 +115,19 @@ function Home() {
             </nav>
 
             <ul className="flex flex-wrap px-5 pt-10 w-full justify-evenly bg-gray-200 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                <h1 className="block w-full text-center text-6xl pb-10 font-suez md:text-blue-600">AÇÕES <p className="text-base text-gray-800 text-center">DESTAQUES</p></h1>
+                <h1 className="block w-full text-center text-6xl pb-5 font-suez md:text-blue-600">AÇÕES </h1>
                 {acaoDTO.map((acao: AcaoDTO, index: number) => (
-                    <li key={index} className="max-w-xs p-2 m-5 border-l-2 border-gray-400">
+                    <li key={index} className="max-w-80 p-2 m-5 border-l-2 border-gray-400">
                         <a href="#">
                             <img className="rounded-t-lg w-44" src={acao.logo} alt="" />
                         </a>
                         <div class="p-5">
                             <a href="#">
-                                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology acquisitions 2021</h5>
+                                <h5 className="flex mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{acao.codigo}
+                                <VariacaoValor variacaoPercentual={acao.variacaoPercentual}/></h5>
                             </a>
-                            <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-                            <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{acao.nome}</p>
+                            <a href="#" className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                                 Read more
                                 <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
@@ -137,7 +138,7 @@ function Home() {
                 ))}
             </ul>
             <ul className="flex flex-wrap px-5 w-full justify-evenly border-t-2 bg-white border border-gray-300 shadow dark:bg-gray-800">
-                <h1 className="block w-full text-center text-6xl pt-10 pb-10 font-suez md:text-blue-600">CRYPTOS<p className="text-base text-gray-800 text-center">DESTAQUES</p></h1>
+                <h1 className="block w-full text-center text-6xl pt-10 pb-10 font-suez md:text-blue-600">CRYPTOS</h1>
                 {cryptoDTO.map((crypto: CryptoDTO, index: number) => (
                     <li key={index} className="max-w-xs p-2 m-5 border-l-2 border-gray-400">
                         <a href="#">
