@@ -7,7 +7,7 @@ interface VariacaoProps {
 export const VariacaoValor: React.FC<VariacaoProps> = ({ variacaoPercentual }) => {
 
     return (
-        <div className="flex items-center justify-center w-2/3 ml-2 ">
+        <div className="flex items-center text-xl mb-5 ml-2">
             {variacaoPercentual < 0 
             ? (
                 <>

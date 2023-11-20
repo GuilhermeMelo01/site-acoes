@@ -1,9 +1,9 @@
 interface AcaoDTO {
-    codigo: string;
+    sigla: string;
     nome: string;
-    fechamento: number;
+    cotacao: number;
     variacaoPercentual: number;
-    logo: string;
+    image: string;
 }
 
 export default AcaoDTO;
