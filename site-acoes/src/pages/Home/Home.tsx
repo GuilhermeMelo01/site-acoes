@@ -2,20 +2,21 @@ import { useEffect, useState } from "react";
 import AcaoDTO from './../../dto/AcaoDTO';
 import axios from "axios";
 import { API_TOKEN, BRAPIAPI_ACOES_BASE_URL, BRAPIAPI_CRYPTO_BASE_URL } from "../../../config";
-import { VariacaoValor } from "../../components/VariacaoValor/VariacaoValor";
-import CryptoDTO from "../../dto/CryptoDTO";
-import { Link } from "react-router-dom";
+import { ListaValores } from "../../components/ListaValores/ListaValores";
+
+import './style.css';
 
 function Home() {
 
     const [acaoDTO, setAcaoDTO] = useState<AcaoDTO[]>([]);
-    const [cryptoDTO, setCryptoDTO] = useState<CryptoDTO[]>([]);
+    const [cryptoDTO, setCryptoDTO] = useState<AcaoDTO[]>([]);
+    const [fiisDTO, setFIIsDTO] = useState<AcaoDTO[]>([]);
 
 
     useEffect(() => {
         const buscarAcoesDestaque = async () => {
             try {
-                const response = await axios.get(`${BRAPIAPI_ACOES_BASE_URL}/PETR4,MGLU3,VALE3,HAPV3,AMER3,BBDC4?range=1y&interval=1m&fundamental=true&dividends=true&token=${API_TOKEN}`);
+                const response = await axios.get(`${BRAPIAPI_ACOES_BASE_URL}/PETR4,MGLU3,VALE3,HAPV3,AMER3,BBDC4?range=1y&interval=1d&fundamental=true&dividends=true&token=${API_TOKEN}`);
                 const { data } = response;
                 const extractedData: AcaoDTO[] = data.results.map((stock: any) => ({
                     sigla: stock.symbol,
@@ -34,12 +35,10 @@ function Home() {
             try {
                 const response = await axios.get(`${BRAPIAPI_CRYPTO_BASE_URL}?coin=BTC,ETC,ADA,BNB,USDT,XRP&token=${API_TOKEN}`);
                 const { data } = response;
-                console.log(data);
-                const cryptos: CryptoDTO[] = data.coins.map((crypto: any) => ({
-                    currency: crypto.currency,
-                    nome: crypto.coinName,
+                const cryptos: AcaoDTO[] = data.coins.map((crypto: any) => ({
                     sigla: crypto.coin,
-                    preco: crypto.regularMarketPrice,
+                    nome: crypto.coinName,
+                    cotacao: crypto.regularMarketPrice,
                     variacaoPercentual: crypto.regularMarketChange,
                     image: crypto.coinImageUrl
                 }));
@@ -50,8 +49,29 @@ function Home() {
             }
         };
 
+        const buscarFIIsDestaques = async () => {
+            try {
+                const response = await axios.get(`${BRAPIAPI_ACOES_BASE_URL}/FNAM11,KLBN11,BPAC11,TAEE11,SMAL11,IGTI11?range=1y&interval=1d&fundamental=true&dividends=true&token=${API_TOKEN}`);
+                const { data } = response;
+
+                console.log(data);
+                const fiis: AcaoDTO[] = data.results.map((fiis: any) => ({
+                    sigla: fiis.symbol,
+                    nome: fiis.longName,
+                    cotacao: fiis.regularMarketPrice,
+                    variacaoPercentual: fiis.regularMarketChangePercent,
+                    image: fiis.logourl
+                }));
+
+                setFIIsDTO(fiis);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
         buscarAcoesDestaque();
         buscarCryptosDestaques();
+        buscarFIIsDestaques();
     }, []);
 
     return (
@@ -116,53 +136,16 @@ function Home() {
             </nav>
 
             <ul className="flex flex-wrap px-5 pt-10 w-full justify-around bg-gray-200 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                <h1 className="block w-full text-center pb-4 text-5xl font-suez text-blue-700">AÇÕES</h1>
-                {acaoDTO.map((acao: AcaoDTO, index: number) => (
-                    <li key={index} className="w-1/4 text p-2 m-5 border-l-2 border-gray-400">
-                        <a href="#">
-                            <img className="rounded-t-lg w-44" src={acao.image} />
-                        </a>
-                        <div className="py-5">
-                            <a href="#">
-                                <h5 className="flex text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{acao.sigla}
-                                </h5>
-                            </a>
-                            <p className=" mb-3 w-80 font-normal text-gray-700 dark:text-gray-400">{acao.nome}</p>
-                            <div className="flex mb-3 ">
-                                <p className="text-4xl font-bold text-gray-900" >{acao.cotacao.toFixed(2)}<span className="text-sm text-gray-600">R$</span></p>
-                                <VariacaoValor variacaoPercentual={acao.variacaoPercentual} />
-                            </div>
-                            <Link to="#" className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                Informações avançadas
-                                <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-                                </svg>
-                            </Link>
-                        </div>
-                    </li>
-                ))}
+                <h1 className="block w-full text-center text-5xl font-suez text-blue-700">AÇÕES DA BOLSA</h1>
+                <ListaValores valores={acaoDTO} />
             </ul>
             <ul className="flex flex-wrap px-5 w-full justify-evenly border-t-2 bg-white border border-gray-300 shadow dark:bg-gray-800">
-                <h1 className="block w-full text-center text-6xl pt-10 pb-10 font-suez md:text-blue-600">CRYPTOS</h1>
-                {cryptoDTO.map((crypto: CryptoDTO, index: number) => (
-                    <li key={index} className="max-w-xs p-2 m-5 border-l-2 border-gray-400">
-                        <a href="#">
-                            <img className="rounded-t-lg w-44" src={crypto.image} alt="" />
-                        </a>
-                        <div className="p-5">
-                            <a href="#">
-                                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Noteworthy technology acquisitions 2021</h5>
-                            </a>
-                            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.</p>
-                            <a href="#" className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                Read more
-                                <svg className="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-                                </svg>
-                            </a>
-                        </div>
-                    </li>
-                ))}
+                <h1 className="block w-full text-center text-5xl pt-10 pb-2 font-suez md:text-blue-600">CRYPTOS</h1>
+                <ListaValores valores={cryptoDTO} />
+            </ul>
+            <ul className="flex flex-wrap px-5 w-full justify-evenly border-t-2 bg-gray-200 border border-gray-300 shadow dark:bg-gray-800">
+                <h1 className="block w-full text-center text-5xl pt-10 font-suez md:text-blue-600">FUNDOS DE INVESTIMENTOS</h1>
+                <ListaValores valores={fiisDTO} />
             </ul>
         </div>
     )
