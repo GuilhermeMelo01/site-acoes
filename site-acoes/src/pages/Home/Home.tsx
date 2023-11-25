@@ -5,8 +5,6 @@ import { API_TOKEN, BRAPIAPI_ACOES_BASE_URL, BRAPIAPI_CRYPTO_BASE_URL } from "..
 import { ListaValores } from "../../components/ListaValores/ListaValores";
 
 import './style.css';
-import { Link } from "react-router-dom";
-import { ListarTodasAcoes } from "../../components/ListarTodasAcoes/ListarTodasAcoes";
 import { Header } from "../../components/Header/Header";
 
 function Home() {

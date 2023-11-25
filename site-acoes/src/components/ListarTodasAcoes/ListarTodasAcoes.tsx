@@ -1,43 +1,54 @@
 
 import { useState } from 'react';
-import AcaoDTO from '../../dto/AcaoDTO';
 import { useEffect } from 'react';
 import axios from 'axios';
 import { API_TOKEN, BRAPIAPI_ACOES_BASE_URL } from '../../../config';
 import { Link } from 'react-router-dom';
 import { Header } from '../Header/Header';
 import allAcoesDTO from '../../dto/AllAcaoDTO';
+
 export const ListarTodasAcoes = () => {
 
     const [allAcoesDTO, setAllAcoesDTO] = useState<allAcoesDTO[]>([])
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
 
         const buscarTodasAcoes = async () => {
-            const response = await axios.get(`${BRAPIAPI_ACOES_BASE_URL}/list?sortBy=close&sortOrder=asc&limit=100&token=${API_TOKEN}`);
-
-            const { data } = response;
-
-            console.log(data);
-            const acoesDTO: allAcoesDTO[] = data.stocks.map((acoes: any) => ({
-                sigla: acoes.stock,
-                nome: acoes.name,
-                setor: acoes.sector,
-                image: acoes.logo,
-            }))
-
-            setAllAcoesDTO(acoesDTO);
+            try{
+                const response = await axios.get(`${BRAPIAPI_ACOES_BASE_URL}/list?sortBy=close&sortOrder=desc&token=${API_TOKEN}`);
+                const { data } = response;
+                let acoesRetorno: any[] = [];
+    
+                data.stocks.map((acao: any) => {
+                    if (!acao.stock.includes('11')) {
+                        acoesRetorno.push(acao);
+                    }
+                });
+    
+                const acoesDTO: allAcoesDTO[] = acoesRetorno.map((acoes: any) => ({
+                    sigla: acoes.stock,
+                    nome: acoes.name,
+                    setor: acoes.sector,
+                    image: acoes.logo,
+                }))
+    
+                setAllAcoesDTO(acoesDTO);
+            }catch(err){
+                console.log(err);
+            }
         }
 
+        console.log("user")
         buscarTodasAcoes();
     }, [])
 
     return (
         <div>
             <Header />
-            <div className="flex flex-wrap px-5 pt-10 w-full justify-around bg-gray-200 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+            <div className="flex flex-wrap pt-10 w-full justify-evenly bg-gray-200 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 {allAcoesDTO.map((acao: allAcoesDTO, index: number) => (
-                    <li key={index} className="flex w-1/3 mx-2 px-1 bg-blue-300 my-5 py-1 list-none">
+                    <li key={index} className="flex w-1/3 mx-1 px-2 bg-blue-300 my-5 py-1 list-none rounded-xl">
                         <a href="#" className='mx-1'>
                             <img className="w-16 rounded-full" src={acao.image} />
                         </a>
