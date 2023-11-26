@@ -26,7 +26,6 @@ const Pagination = (props: PaginationDetailsProps) => {
         pageSize
     });
 
-    // Se houver menos que 2 vezes no intervalo de paginação, não renderizamos o componente
     if (!paginationRange || currentPage === 0 || paginationRange.length < 2) {
         return null;
     }
@@ -42,11 +41,11 @@ const Pagination = (props: PaginationDetailsProps) => {
     let lastPage = paginationRange[paginationRange.length - 1];
 
     return (
-        <div className="flex items-center justify-between border-t border-gray-200 bg-gray-200 px-4 pt-3 sm:px-6">
+        <div className="flex items-center justify-between border-gray-200 bg-gray-200 px-4 pt-3 sm:px-6">
             <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
                 <div>
                     <p className="text-sm text-gray-700">
-                        Showing <span className="font-medium">1</span> to <span className="font-medium">10</span> of{' '}
+                        Showing <span className="font-medium">{currentPage}</span> to <span className="font-medium">{lastPage}</span> of{' '}
                         <span className="font-medium">{totalCount}</span> results
                     </p>
                 </div>
@@ -60,13 +59,10 @@ const Pagination = (props: PaginationDetailsProps) => {
                         </li>
                         
                         {paginationRange.map(pageNumber => {
-
-                            // Se o pageItem for um PONTO (DOT), renderize o caractere unicode DOTS
                             if (pageNumber === DOTS) {
                                 return <li className=" w-12 flex justify-center border-y-2 border-indigo-600200 text-gray-400 font-bold">&#8230;</li>;
                             }
-
-                            // Renderize a amostra de página
+                            
                             return (
                                 <li className="relative z-10 inline-flex items-center bg-gray-300 px-4 py-2 text-sm font-semibold text-blue-600 focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                     aria-current="page"

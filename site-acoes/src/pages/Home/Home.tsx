@@ -77,15 +77,15 @@ function Home() {
         <div>
             <Header />
             <ul className="flex flex-wrap px-5 pt-10 w-full justify-around bg-gray-200 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                <h1 className="block w-full text-center text-5xl font-suez text-blue-700">AÇÕES DA BOLSA</h1>
+                <h1 className="block w-full text-center text-5xl font-suez text-blue-800">AÇÕES DA BOLSA</h1>
                 <ListaValores valores={acaoDTO} />
             </ul>
             <ul className="flex flex-wrap px-5 w-full justify-evenly border-t-2 bg-white border border-gray-300 shadow dark:bg-gray-800">
-                <h1 className="block w-full text-center text-5xl pt-10 pb-2 font-suez md:text-blue-600">CRYPTOS</h1>
+                <h1 className="block w-full text-center text-5xl pt-10 pb-2 font-suez md:text-blue-800">CRYPTOS</h1>
                 <ListaValores valores={cryptoDTO} />
             </ul>
             <ul className="flex flex-wrap px-5 w-full justify-evenly border-t-2 bg-gray-200 border border-gray-300 shadow dark:bg-gray-800">
-                <h1 className="block w-full text-center text-5xl pt-10 font-suez md:text-blue-600">FUNDOS DE INVESTIMENTOS</h1>
+                <h1 className="block w-full text-center text-5xl pt-10 font-suez text-blue-800">FUNDOS DE INVESTIMENTOS IMOBILIÁRIOS</h1>
                 <ListaValores valores={fiisDTO} />
             </ul>
         </div>
